@@ -158,3 +158,10 @@ Make sure to rerun step 1 after every change you make.
 1. Run `polymer serve`
 
 1. Open `http://127.0.0.1:PORT/components/polymer/` to view the documentation
+
+
+---
+
+## Leborn fork notice
+
+This project is now part of the [Leborn](https://github.com/leborn-dev) initiative. The general Leborn contribution guidelines also apply. See [`LEBORN.md`](./LEBORN.md).

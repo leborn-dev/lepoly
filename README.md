@@ -1,3 +1,7 @@
+> **Notice:** This is **LePoly**, a [Leborn](https://github.com/leborn-dev) fork of Polymer. We are reviving this project for the AI era. See [`LEBORN.md`](./LEBORN.md) and [`NOTICE`](./NOTICE) for details.
+
+---
+
 # Polymer
 
 [![Build Status](https://travis-ci.org/Polymer/polymer.svg?branch=master)](https://travis-ci.org/Polymer/polymer)

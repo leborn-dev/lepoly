@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+<script src="/test/browser-setup.js"></script>
+<script src="/dist/compiled/polymer-element.js"></script>
+<script>
+// Use a classic-script subclass; Reflect.construct is the same native-class
+// interop mechanism Babel uses in the compiled library.
+function CompiledElement() {
+  return Reflect.construct(PolymerElementBundle.PolymerElement, [], CompiledElement);
+}
+Object.setPrototypeOf(CompiledElement, PolymerElementBundle.PolymerElement);
+CompiledElement.prototype = Object.create(PolymerElementBundle.PolymerElement.prototype,
+  {constructor: {value: CompiledElement, configurable: true, writable: true}});
+Object.defineProperty(CompiledElement, 'properties', {get: function() {
+  return {name: {type: String, value: 'Leborn'}};
+}});
+Object.defineProperty(CompiledElement, 'template', {get: function() {
+  var template = document.createElement('template');
+  template.innerHTML = '<p>Hello [[name]]</p>';
+  return template;
+}});
+customElements.define('compiled-modern-element', CompiledElement);
+suite('compiled ES5 modern classic script', function() {
+  test('preserves public exports, Shadow DOM, and live property updates', function() {
+    assert.deepEqual(Object.keys(PolymerElementBundle).sort(), ['PolymerElement', 'html', 'version'].sort());
+    assert.isString(PolymerElementBundle.version);
+    assert.isFunction(PolymerElementBundle.PolymerElement);
+    assert.isFunction(PolymerElementBundle.html);
+    var element = document.createElement('compiled-modern-element');
+    document.body.appendChild(element);
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Leborn');
+    element.name = 'Changed';
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Changed');
+    element.remove();
+  });
+});
+</script>

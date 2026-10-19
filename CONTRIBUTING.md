@@ -82,7 +82,7 @@ npx playwright install chromium
 npm test
 ```
 
-`npm test` runs source/HTML lint, build/documentation integration checks, and all browser suites/variants declared in `test/runner.html`. `browser-test-results.json` contains individual assertion failures, pending cases, and browser errors. The suite runs against native Shadow DOM, forced ShadyDOM, and forced ShadyDOM plus Custom Elements; it also verifies the generated modern/legacy bundles and Markdown sanitization.
+`npm test` runs source/HTML lint, build/documentation integration checks, and all browser suites/variants declared in `test/runner.html`. `browser-test-results.json` contains individual assertion failures, pending cases, and browser errors. The suite runs against native Shadow DOM, forced ShadyDOM, and forced ShadyDOM plus Custom Elements; it also verifies the generated modern/legacy bundles in both ES module and ES5 classic-script formats and Markdown sanitization.
 
 For focused debugging, use `TEST_FILTER=property-effects npm run test:browser`. Install Playwright Firefox or WebKit and set `TEST_BROWSER=firefox` or `TEST_BROWSER=webkit` to select another engine. The old Polymer CLI/WCT/Sauce launcher is replaced by this browser runner.
 

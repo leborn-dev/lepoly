@@ -131,7 +131,7 @@ However, the [`polymer-modulizer`](https://github.com/Polymer/polymer-modulizer)
 
 ## Developing this fork
 
-Use Node.js 22.13 or newer. The retired Polymer CLI contains a published shrinkwrap that fixes vulnerable development dependencies; this checkout uses current build, serve, lint, and browser tooling instead.
+For development of this checkout, use Node.js 22.13 or newer. This requirement is limited to development tooling; the published library does not impose a new Node engine restriction. The retired Polymer CLI contains a published shrinkwrap that fixes vulnerable development dependencies; this checkout uses current build, serve, lint, and browser tooling instead.
 
 ```sh
 npm ci
@@ -143,9 +143,14 @@ npm run serve
 
 `npm run analyze` creates the API documentation descriptor. `npm run serve` serves the documentation and test pages at http://localhost:8081 with bare module imports resolved. `npm run generate-types` retains the original analyzer-based Closure declarations in `externs/closure-types.js`; installation runs it automatically. `npm run lint` checks library, HTML tests, and utilities with ESLint and Closure-style JSDoc validation.
 
-`npm run build` replaces the former gulp/Closure/Babel build pipelines. It produces minified, standalone ES modules for `polymer-element.js`, `polymer-legacy.js`, `apply-shim.js`, and `custom-style-interface.js` under `dist/bundled/`, with source maps, license notices, byte/gzip size reporting, and `dist/metafile.json`. The development build target is ES2018; the published source modules and TypeScript declarations retain their existing API. The obsolete experimental Closure lint pipeline was already disabled upstream.
+`npm run build` replaces the former gulp/Closure/Babel build pipelines and produces both sets of artifacts for `polymer-element.js`, `polymer-legacy.js`, `apply-shim.js`, and `custom-style-interface.js`:
 
-`npm run test:browser` builds and runs the existing HTML suite list, including every query variant and the native Shadow DOM, forced ShadyDOM, and forced Custom Elements combinations. It also tests both generated public bundles and Markdown documentation rendering/sanitization. Results, pending upstream cases, browser exceptions, and individual assertion failures are written to `browser-test-results.json`; any failed assertion, uncaught exception, or empty suite fails the command. For focused debugging use `TEST_FILTER=property-effects npm run test:browser`. To select another Playwright browser, first install it and set `TEST_BROWSER=firefox` or `TEST_BROWSER=webkit`.
+- `dist/bundled/`: minified standalone ES modules targeting ES2018, retaining each entrypoint's named exports.
+- `dist/compiled/`: minified classic scripts targeting ES5, preserving the former compiled-output path. Babel preset-env explicitly targets IE11 and lowers all ES2015+ syntax. The public exports are available as `PolymerElementBundle` and `PolymerLegacyBundle`; the optional fragment scripts expose `ShadyCSSApplyShimBundle` and `ShadyCSSCustomStyleBundle` and retain their ShadyCSS initialization side effects.
+
+Both outputs include source maps, license notices, byte/gzip size reporting, and entries in `dist/metafile.json`. The published source modules and TypeScript declarations retain their existing API. The obsolete experimental Closure lint pipeline was already disabled upstream. To load a compiled legacy bundle as a classic script, load the Web Components polyfills first, then `dist/compiled/polymer-legacy.js`, and create elements through `PolymerLegacyBundle.Polymer`. Its `html` and `Base` exports remain available. The compiled modern bundle similarly exposes `PolymerElementBundle.PolymerElement`, `html`, and `version`.
+
+`npm run test:browser` builds and runs the existing HTML suite list, including every query variant and the native Shadow DOM, forced ShadyDOM, and forced Custom Elements combinations. It also tests both ES module and ES5 classic-script public bundles and Markdown documentation rendering/sanitization. The tooling integration suite parses all four compiled scripts using an ES5 parser before the browser tests run. Results, pending upstream cases, browser exceptions, and individual assertion failures are written to `browser-test-results.json`; any failed assertion, uncaught exception, or empty suite fails the command. For focused debugging use `TEST_FILTER=property-effects npm run test:browser`. To select another Playwright browser, first install it and set `TEST_BROWSER=firefox` or `TEST_BROWSER=webkit`.
 
 The documentation's `@polymer/marked-element` has a scoped compatibility fork in `vendor/marked-element`. It retains the original element implementation and updates only the parser import and dependency to patched Marked 4.x, which preserves the renderer, callback, sanitize, and sanitizer APIs. See its [maintenance notes](vendor/marked-element/SECURITY.md).
 

@@ -27,7 +27,10 @@
     "eslint-plugin-jsdoc": "^65.3.12",
     "rollup": "^4.64.10",
     "@polymer/marked-element": "file:vendor/marked-element",
-    "polymer-analyzer": "^3.2.4"
+    "polymer-analyzer": "^3.2.4",
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "espree": "^11.2.0"
   },
   "scripts": {
     "build": "node util/build.cjs",
@@ -66,9 +69,6 @@
     "manifest.json",
     "CHANGELOG.md"
   ],
-  "engines": {
-    "node": ">=22.13.0"
-  },
   "overrides": {
     "@polymer/marked-element": "$@polymer/marked-element"
   }

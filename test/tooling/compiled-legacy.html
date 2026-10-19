@@ -1,0 +1,26 @@
+<!doctype html>
+<meta charset="utf-8">
+<script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+<script src="/test/browser-setup.js"></script>
+<script src="/dist/compiled/polymer-legacy.js"></script>
+<script>
+var template = document.createElement('template');
+template.innerHTML = '<p>Hello [[name]]</p>';
+PolymerLegacyBundle.Polymer({is: 'compiled-legacy-element',
+  properties: {name: {type: String, value: 'Leborn'}}, _template: template});
+suite('compiled ES5 legacy classic script', function() {
+  test('preserves public exports, Shadow DOM, and live property updates', function() {
+    assert.deepEqual(Object.keys(PolymerLegacyBundle).sort(), ['Base', 'Polymer', 'html'].sort());
+    assert.isFunction(PolymerLegacyBundle.Polymer);
+    assert.isFunction(PolymerLegacyBundle.html);
+    assert.equal(typeof PolymerLegacyBundle.Base, 'object');
+    assert.isFunction(PolymerLegacyBundle.Base.fire);
+    var element = document.createElement('compiled-legacy-element');
+    document.body.appendChild(element);
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Leborn');
+    element.name = 'Changed';
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Changed');
+    element.remove();
+  });
+});
+</script>

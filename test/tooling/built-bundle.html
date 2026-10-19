@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8">
+<script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+<script src="/test/browser-setup.js"></script>
+<script type="module">
+import {PolymerElement, html} from '/dist/bundled/polymer-element.js';
+class BuiltTestElement extends PolymerElement {
+  static get properties() { return {name: {type: String, value: 'Leborn'}}; }
+  static get template() { return html`<p>Hello [[name]]</p>`; }
+}
+customElements.define('built-test-element', BuiltTestElement);
+suite('built Polymer bundle', function() {
+  test('renders Shadow DOM and propagates property updates', function() {
+    const element = document.createElement('built-test-element');
+    document.body.appendChild(element);
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Leborn');
+    element.name = 'Changed';
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Changed');
+    element.remove();
+  });
+});
+</script>

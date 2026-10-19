@@ -74,90 +74,26 @@ Polymer also participates in Google's [Patch Rewards Program](https://www.google
 
 ## Unit tests
 
-All Polymer projects use [`polymer-cli`](https://github.com/Polymer/tools/tree/master/packages/cli) for unit tests.
+This fork uses Node.js 22.13 or newer and the locally locked development tools. Install and run:
 
-For maximum flexibility, install `polymer-cli` locally:
+```sh
+npm ci
+npx playwright install chromium
+npm test
+```
 
-    npm install -g polymer-cli
+`npm test` runs source/HTML lint, build/documentation integration checks, and all browser suites/variants declared in `test/runner.html`. `browser-test-results.json` contains individual assertion failures, pending cases, and browser errors. The suite runs against native Shadow DOM, forced ShadyDOM, and forced ShadyDOM plus Custom Elements; it also verifies the generated modern/legacy bundles and Markdown sanitization.
 
-### Running the Polymer library unit tests
+For focused debugging, use `TEST_FILTER=property-effects npm run test:browser`. Install Playwright Firefox or WebKit and set `TEST_BROWSER=firefox` or `TEST_BROWSER=webkit` to select another engine. The old Polymer CLI/WCT/Sauce launcher is replaced by this browser runner.
 
-To run the Polymer library unit tests:
+### Viewing source documentation locally
 
-1.  Clone the [Polymer repo](https://github.com/polymer/polymer).
+```sh
+npm run analyze
+npm run serve
+```
 
-2.  Install the dependencies:
-
-		npm install
-
-3.  Run the tests:
-
-		npm test
-
-    Or if you have `polymer-cli` installed locally:
-
-		polymer test --npm
-
-To run individual test suites:
-
-<code>npm test <var>path/to/suite</var></code>
-
-Or:
-
-<code>polymer test --npm <var>path/to/suite</var></code>
-
-For example:
-
-	polymer test --npm test/unit/polymer.element.html
-
-You can also run tests in the browser:
-
-	polymer serve --npm
-
-Navigate to:
-
-[`http://localhost:8080/components/@polymer/polymer/test/runner.html`](http://localhost:8080/components/@polymer/polymer/test/runner.html)
-
-### Running Polymer element unit tests
-
-To run the element unit tests, you need a global install of `polymer-cli` .
-
-1. Clone the element repo.
-
-1. Install the dependencies.
-
-       bower install
-
-1. Run the tests:
-
-       polymer test
-
-     Or run the tests in a browser:
-
-       polymer serve
-
-     Navigate to:
-
-     <code>http://localhost:8080/components/<var>element-name</var>/test/runner.html</code>
-
-### Configuring `web-component-tester`
-
-By default, `polymer test` runs tests on all installed browsers. You can configure it
-to run tests on a subset of available browsers, or to run tests remotely using Sauce Labs.
-
-See the [`web-component-tester` README](https://github.com/Polymer/tools/tree/master/packages/web-component-tester) for
-information on configuring the tool using by `polymer-cli` to run the tests.
-
-### Viewing the source documentation locally
-
-You can view the updates you make to the source documentation locally with the following steps.
-Make sure to rerun step 1 after every change you make.
-
-1. Run `polymer analyze > analysis.json`
-
-1. Run `polymer serve`
-
-1. Open `http://127.0.0.1:PORT/components/polymer/` to view the documentation
+Open `http://localhost:8081/`. Rerun `npm run analyze` after changing public API documentation. `npm run analyze` replaces `polymer analyze`; it uses the same Polymer Analyzer and validates the generated `analysis.json` descriptor. `npm run generate-types` separately regenerates the original Closure mixin declarations. See [the development guide](README.md#developing-this-fork) for build outputs and toolchain migration details.
 
 
 ---

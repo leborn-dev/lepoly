@@ -1,0 +1,24 @@
+name: Test and dependency audit
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm audit
+      - run: npm test
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: browser-test-results
+          path: browser-test-results.json

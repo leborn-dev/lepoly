@@ -18,3 +18,6 @@ analysis.json
 
 # NPM artifact
 polymer-polymer-*.tgz
+
+# Browser regression evidence (created by npm test)
+browser-test-results*.json

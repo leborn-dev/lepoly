@@ -38,7 +38,7 @@ Web Components are now implemented natively on Safari and Chrome (~70% of instal
  * You can also save [this HTML file](https://gist.githubusercontent.com/kevinpschaaf/8a5acbea7b25d2bb5e82eeea2b105669/raw/c3a86872f07603e2d0ddae736687e52a5c8c499f/index.html) to a local file and run it in any browser that supports [JavaScript Modules]((https://caniuse.com/#search=modules)).
 
  * When you're ready to use Polymer in a project, install it via [npm](https://www.npmjs.com/). To run the project in the browser,
- a module-compatible toolchain is required. We recommend installing the [Polymer CLI](https://github.com/Polymer/tools/tree/master/packages/cli) to and using its development server as follows.
+ a module-compatible toolchain is required. Use [Web Dev Server](https://modern-web.dev/docs/dev-server/overview/) as follows.
 
     1. Add Polymer to your project:
 
@@ -46,13 +46,13 @@ Web Components are now implemented natively on Safari and Chrome (~70% of instal
 
     1. Create an element by extending PolymerElement and calling `customElements.define` with your class (see the examples below).
 
-    1. Install the Polymer CLI:
+    1. Install Web Dev Server:
 
-        ```npm i -g polymer-cli```
+        ```npm i -D @web/dev-server```
 
     1. Run the development server and open a browser pointing to its URL:
 
-        ```polymer serve --npm```
+        ```npx web-dev-server --node-resolve```
 
     > Polymer 3.0 is published on [npm](https://www.npmjs.com/package/@polymer/polymer) using JavaScript Modules.
     This means it can take advantage of the standard native JavaScript module loader available in all current major browsers.
@@ -128,6 +128,26 @@ However, the [`polymer-modulizer`](https://github.com/Polymer/polymer-modulizer)
 👀 **Looking for Polymer v2.x?** Please see [the v2 branch](https://github.com/Polymer/polymer/tree/2.x).
 
 👀 **Looking for Polymer v1.x?** Please see [the v1 branch](https://github.com/Polymer/polymer/tree/1.x).
+
+## Developing this fork
+
+Use Node.js 22.13 or newer. The retired Polymer CLI contains a published shrinkwrap that fixes vulnerable development dependencies; this checkout uses current build, serve, lint, and browser tooling instead.
+
+```sh
+npm ci
+npx playwright install chromium
+npm test
+npm run build
+npm run serve
+```
+
+`npm run analyze` creates the API documentation descriptor. `npm run serve` serves the documentation and test pages at http://localhost:8081 with bare module imports resolved. `npm run generate-types` retains the original analyzer-based Closure declarations in `externs/closure-types.js`; installation runs it automatically. `npm run lint` checks library, HTML tests, and utilities with ESLint and Closure-style JSDoc validation.
+
+`npm run build` replaces the former gulp/Closure/Babel build pipelines. It produces minified, standalone ES modules for `polymer-element.js`, `polymer-legacy.js`, `apply-shim.js`, and `custom-style-interface.js` under `dist/bundled/`, with source maps, license notices, byte/gzip size reporting, and `dist/metafile.json`. The development build target is ES2018; the published source modules and TypeScript declarations retain their existing API. The obsolete experimental Closure lint pipeline was already disabled upstream.
+
+`npm run test:browser` builds and runs the existing HTML suite list, including every query variant and the native Shadow DOM, forced ShadyDOM, and forced Custom Elements combinations. It also tests both generated public bundles and Markdown documentation rendering/sanitization. Results, pending upstream cases, browser exceptions, and individual assertion failures are written to `browser-test-results.json`; any failed assertion, uncaught exception, or empty suite fails the command. For focused debugging use `TEST_FILTER=property-effects npm run test:browser`. To select another Playwright browser, first install it and set `TEST_BROWSER=firefox` or `TEST_BROWSER=webkit`.
+
+The documentation's `@polymer/marked-element` has a scoped compatibility fork in `vendor/marked-element`. It retains the original element implementation and updates only the parser import and dependency to patched Marked 4.x, which preserves the renderer, callback, sanitize, and sanitizer APIs. See its [maintenance notes](vendor/marked-element/SECURITY.md).
 
 ## Contributing
 

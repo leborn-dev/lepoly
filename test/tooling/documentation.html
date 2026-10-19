@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+<script src="/test/browser-setup.js"></script>
+<script type="module">
+import '@polymer/marked-element/marked-element.js';
+suite('documentation Markdown compatibility', function() {
+  let element, output;
+  setup(function() {
+    element = document.createElement('marked-element');
+    output = document.createElement('div');
+    output.slot = 'markdown-html';
+    element.appendChild(output);
+    document.body.appendChild(element);
+  });
+  teardown(function() { element.remove(); });
+  test('sanitize blocks HTML event handlers and javascript links in the actual DOM', function() {
+    element.sanitize = true;
+    element.markdown = '<img src=x onerror="window.markdownExecuted=true">\n\n[unsafe](javascript:alert(1))';
+    assert.isNull(output.querySelector('img'));
+    assert.isNull(output.querySelector('[onerror]'));
+    assert.isNull(output.querySelector('a[href^="javascript:"]'));
+    assert.notOk(window.markdownExecuted);
+  });
+  test('preserves relative links, fenced code blocks, custom renderer, sanitizer, and completion event', function() {
+    let completions = 0;
+    element.addEventListener('marked-render-complete', function() { completions++; });
+    element.renderer = function(renderer) {
+      renderer.heading = function(text) { return '<h2 class="custom">' + text + '</h2>'; };
+    };
+    element.markdown = '# Heading\n\n[relative](../guide.html)\n\n```js\nconst answer = 42;\n```';
+    assert.equal(output.querySelector('h2.custom').textContent, 'Heading');
+    assert.equal(output.querySelector('a').getAttribute('href'), '../guide.html');
+    assert.equal(output.querySelector('code.language-js').textContent.trim(), 'const answer = 42;');
+    assert.isAbove(completions, 0);
+    element.sanitize = true;
+    element.sanitizer = function() { return 'filtered'; };
+    element.markdown = '<img src=x onerror="alert(1)">';
+    assert.include(output.textContent, 'filtered');
+    assert.isNull(output.querySelector('img'));
+  });
+  test('renders Markdown using the patched parser and legacy element API', function() {
+    element.markdown = '# Documentation\n\n**safe parser** and `code`';
+    assert.equal(output.querySelector('h1').textContent, 'Documentation');
+    assert.equal(output.querySelector('strong').textContent, 'safe parser');
+    assert.equal(output.querySelector('code').textContent, 'code');
+  });
+});
+</script>

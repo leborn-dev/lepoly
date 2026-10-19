@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+<script src="/test/browser-setup.js"></script>
+<script type="module">
+import {Polymer, html} from '/dist/bundled/polymer-legacy.js';
+Polymer({is: 'built-test-element', properties: {name: {type: String, value: 'Leborn'}}, _template: html`<p>Hello [[name]]</p>`});
+suite('built legacy Polymer bundle', function() {
+  test('renders Shadow DOM and propagates property updates', function() {
+    const element = document.createElement('built-test-element');
+    document.body.appendChild(element);
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Leborn');
+    element.name = 'Changed';
+    assert.equal(element.shadowRoot.querySelector('p').textContent, 'Hello Changed');
+    element.remove();
+  });
+});
+</script>
